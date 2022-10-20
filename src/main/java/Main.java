@@ -18,9 +18,7 @@ public class Main {
         frame.setSize(950,740);
         frame.setLocationRelativeTo(null);
 
-
-
-
+        panel.startGameThread();
 
         frame.setVisible(true);
         frame.setAlwaysOnTop(true);
