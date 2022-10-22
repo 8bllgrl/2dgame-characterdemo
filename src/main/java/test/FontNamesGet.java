@@ -1,3 +1,5 @@
+package test;
+
 import java.awt.GraphicsEnvironment;
 
 public class FontNamesGet

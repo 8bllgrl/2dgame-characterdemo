@@ -1,3 +1,5 @@
+package test;
+
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

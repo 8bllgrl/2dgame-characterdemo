@@ -1,3 +1,5 @@
+import test.EnumGender;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +12,8 @@ public class MyPanel extends JPanel implements Runnable{
     int rectwid, recthei;
     BufferedImage hdatih;
     BufferedImage basicMiqo;
+    BufferedImage maleimage;
+    BufferedImage femaleimage;
     private int frames =0 ;
     private long lastCheck = 0;
     Thread gameThread;
@@ -19,6 +23,15 @@ public class MyPanel extends JPanel implements Runnable{
     private int animationSpeed = 15;
 
     private BufferedImage[] walkAnimation;
+
+    //get/set assets
+    String firstName;
+    char tribeLetter;
+    String lastName;
+    //appearance
+    int appearanceRow = 0;
+    EnumGender gender;
+
 
     MyPanel() {
 
@@ -50,12 +63,31 @@ public class MyPanel extends JPanel implements Runnable{
         g2.drawString("Name",55,55);
         //First Name
         g2.drawString("Sun Miqo'te",25,100);
-
         //Last Name
         g2.drawString("Tia",300,100);
+        //Gender Button
+        g2.drawString("Gender",47,162);
+        //Voice Button
+        g2.drawString("Voice",25,300);
+        //Voice text
+        g2.drawString("M:1",82,350);
+        //Age Button
+        g2.drawString("Age",25,400);
+        //Age text
+        g2.drawString("X",100,450);
+        //Appearance Button
+        g2.drawString("Appearance",500,52);
+        //Appearance Text
+        g2.drawString("m-1",555,100);
 
         updateAnimationTick();
         g2.drawImage(walkAnimation[animationIndex],215,90, 315,415,null);
+
+        ///gender images:
+        g2.drawImage(femaleimage,35,200,50,50,null);
+        g2.drawImage(maleimage,100,200,50,50,null);
+
+
 
 
 
@@ -292,11 +324,13 @@ public class MyPanel extends JPanel implements Runnable{
     }
 
     private void importImage() {
-        InputStream inputStreamHdatih = getClass().getResourceAsStream("/hda-f.png");
+        InputStream inputStreamHdatih = getClass().getResourceAsStream("/imageassets/hda-f.png");
 
         try {
             hdatih = ImageIO.read(inputStreamHdatih);
-            basicMiqo = ImageIO.read(getClass().getResourceAsStream("/animbase.png"));
+            basicMiqo = ImageIO.read(getClass().getResourceAsStream("/imageassets/animbase.png"));
+            femaleimage = ImageIO.read(getClass().getResourceAsStream("/imageassets/pank.png"));
+            maleimage = ImageIO.read(getClass().getResourceAsStream("/imageassets/blea.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
