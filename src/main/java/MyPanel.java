@@ -19,10 +19,16 @@ public class MyPanel extends JPanel implements Runnable {
     private int frames = 0;
     private long lastCheck = 0;
     Thread gameThread;
-    int FPS = 60;
+    int FPS = 60; //draws the game scene. Renders.
+    private final int UPS = 200;//UPS vs FPS
+    //ups: takes care of the logic of the game. otherwise known as ticks. events that happen, checks for changes and applies it.
+    //Why are they seperated? Much easier to read the code. Runs as smooth as possible. Allows the player to set a lower FPS. UPS is a constant speed.
+
+    private int updatepersecondDisplay = 0;
+
 
     private int animationTick, animationIndex;
-    private int animationSpeed = 15;
+    private int animationSpeed = 60;
 
     private BufferedImage[] walkAnimation;
 
@@ -48,6 +54,11 @@ public class MyPanel extends JPanel implements Runnable {
 
     }
 
+    public void updateGame() {
+        //everything that has to do with logic.
+        updateAnimationTick();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -57,7 +68,8 @@ public class MyPanel extends JPanel implements Runnable {
         drawUIText(g2);
 
 
-        updateAnimationTick();
+        displayFPSCounter(g2);
+        displayUPSCounter(g2);
 
         drawCharacter(g2);
         ///gender images:
@@ -74,6 +86,17 @@ public class MyPanel extends JPanel implements Runnable {
         }
 
         g2.dispose();
+    }
+
+    public void displayFPSCounter(Graphics2D g2) {
+        g2.setColor(Color.yellow);
+        g2.drawString("FPS:" + getFPS(), 805, 665);
+        update();
+    }
+    public void displayUPSCounter(Graphics2D g2) {
+        g2.setColor(Color.yellow);
+        g2.drawString("UPS:" + getUpdatepersecondDisplay(), 805, 695);
+        update();
     }
 
     public void drawUIImproved(Graphics2D g2) {
@@ -161,23 +184,48 @@ public class MyPanel extends JPanel implements Runnable {
 
     public void run() {
 
-        double drawInterval = 1000000000 / FPS;
-        double delta = 0;
-        long lastTime = System.nanoTime();
-        long currentTime;
+        double timePerFrame = 1000000000.0 / FPS;
+        double timePerUpdate = 1000000000.0 / UPS;
+
+        long previousTime = System.nanoTime();
+
+        int frames = 0;
+        int updates = 0;
+        long lastCheck = System.currentTimeMillis();
+
+        double deltaUpdate = 0;
+        double deltaFrame = 0;
+
         while (gameThread != null) {
+            long currentTime = System.nanoTime();
 
-            currentTime = System.nanoTime();
-            delta += (currentTime - lastTime) / drawInterval;
+            deltaUpdate += (currentTime - previousTime) / timePerUpdate;
+            deltaFrame += (currentTime - previousTime) / timePerFrame;
+            previousTime = currentTime;
 
-            lastTime = currentTime;
+            if (deltaUpdate >= 1) {
+                updateGame();
+                updates++;
+                deltaUpdate--;
+            }
 
-            if (delta >= 1) {
+            if (deltaFrame >= 1) {
                 repaint();
-                delta--;
+                frames++;
+                deltaFrame--;
+
+            }
+
+            if (System.currentTimeMillis() - lastCheck >= 1000) {
+                lastCheck = System.currentTimeMillis();
+                System.out.println("FPS: " + frames + " |  UPS:" + updates);
+                setFPS(frames);
+                setUpdatepersecondDisplay(updates);
+
+                updates = 0;
+                frames = 0;
             }
         }
-
     }
 
     private void loadAnimations() {
@@ -208,7 +256,6 @@ public class MyPanel extends JPanel implements Runnable {
 
     }
 
-
     private void importImage() {
         InputStream inputStreamHdatih = getClass().getResourceAsStream("/imageassets/hda-f.png");
 
@@ -224,7 +271,9 @@ public class MyPanel extends JPanel implements Runnable {
     }
 
 
+
     //getset previous next
+
 
     public void setAgeNext() {
         //set to the next value
@@ -253,6 +302,14 @@ public class MyPanel extends JPanel implements Runnable {
 
     //getters and setters
 
+
+    public int getUpdatepersecondDisplay() {
+        return updatepersecondDisplay;
+    }
+
+    public void setUpdatepersecondDisplay(int updatepersecondDisplay) {
+        this.updatepersecondDisplay = updatepersecondDisplay;
+    }
 
     public void setRandomFirstName() {
         //array of miqote names
